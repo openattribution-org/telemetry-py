@@ -1,5 +1,5 @@
 """
-OpenAttribution Telemetry Schema v0.5
+OpenAttribution Telemetry Schema v0.1
 
 This module defines the core data types for the OpenAttribution standard.
 OpenAttribution is an open specification for tracking content attribution
@@ -27,6 +27,7 @@ from pydantic import BaseModel, Field
 EventType = Literal[
     # Content lifecycle events
     "content_retrieved",  # Content fetched from source
+    "content_grounded",  # Content loaded into agent context
     "content_displayed",  # Content shown to user
     "content_engaged",  # User interacted with content
     "content_cited",  # Content referenced in response
@@ -108,14 +109,52 @@ Actor type for the session initiator.
 - agent: An AI agent calling another agent
 """
 
-SourceRole = Literal["origin", "index", "cache", "agent"]
+SourceRole = Literal["origin", "edge", "index", "agent"]
 """
 Who is reporting a retrieval event.
 
 - origin: Content owner's web server detected an AI agent/bot request
+- edge: CDN or edge network (Cloudflare, Fastly, Akamai, etc.) - reports even on cache MISS
 - index: Search index or content repository that served the content
-- cache: CDN or edge layer (Cloudflare, Fastly, etc.)
 - agent: The AI agent itself, reporting content it fetched
+"""
+
+CitationType = Literal["direct_quote", "paraphrase", "reference", "contradiction"]
+"""
+How content was used in the response.
+
+- direct_quote: Verbatim or near-verbatim excerpt
+- paraphrase: Content restated in the agent's own words
+- reference: Content referenced but not quoted or paraphrased
+- contradiction: Content retrieved but explicitly disagreed with (negative attribution)
+"""
+
+CitationPosition = Literal["primary", "supporting", "mentioned"]
+"""
+Prominence of a citation in the agent's response.
+
+- primary: Main source driving the response
+- supporting: Corroborating or supplementary source
+- mentioned: Briefly referenced without substantive use
+"""
+
+BotCategory = Literal["training", "inference", "search"]
+"""
+Edge platform's classification of the requesting bot.
+
+- training: Crawling for model training
+- inference: Fetching at query time (RAG) - most relevant for content attribution
+- search: AI search indexing
+"""
+
+CacheStatus = Literal["hit", "miss", "bypass", "dynamic"]
+"""
+Edge cache result for a content retrieval.
+
+- hit: Served from cache
+- miss: Cache miss, fetched from origin
+- bypass: Cache intentionally bypassed
+- dynamic: Content generated dynamically (not cacheable)
 """
 
 
@@ -130,12 +169,88 @@ class Initiator(BaseModel):
     Attributes:
         agent_id: Calling agent's identifier.
         manifest_ref: Calling agent's AIMS manifest reference.
-        operator_id: Organization operating the calling agent.
+        operator_id: Organisation operating the calling agent.
     """
 
     agent_id: str | None = None
     manifest_ref: str | None = None
     operator_id: str | None = None
+
+
+# =============================================================================
+# DATA PROFILE MODELS (spec section 4)
+# =============================================================================
+
+
+class CitationData(BaseModel):
+    """
+    Recommended data profile for ``content_cited`` events.
+
+    All fields are optional - they are recommended, not required.
+    Place in the event's ``data`` dict or use this model for validation.
+
+    Attributes:
+        citation_type: How content was used in the response.
+        excerpt_tokens: Token count of the excerpt used.
+        position: Prominence of citation in the response.
+        content_hash: SHA-256 of cited content for verification (``sha256:{hex}``).
+    """
+
+    citation_type: CitationType | None = None
+    excerpt_tokens: int | None = None
+    position: CitationPosition | None = None
+    content_hash: str | None = None
+
+
+class EdgeEnrichment(BaseModel):
+    """
+    Recommended data profile for ``content_retrieved`` events with ``source_role: edge``.
+
+    CDN and edge network integrations SHOULD include these fields.
+    All fields are optional.
+
+    Attributes:
+        user_agent: Request User-Agent header.
+        bot_category: Edge platform's bot classification (training/inference/search).
+        verified: Whether the bot identity was cryptographically verified.
+        cache_status: Edge cache result (hit/miss/bypass/dynamic).
+        response_status: HTTP response status code.
+        response_bytes: Response body size in bytes.
+        ja4: JA4 TLS client fingerprint.
+        asn: Client AS number.
+        asn_org: Client AS organisation name.
+        country: ISO 3166-1 alpha-2 country code.
+        ip_hash: SHA-256 of client IP (``sha256:{hex}``).
+    """
+
+    user_agent: str | None = None
+    bot_category: BotCategory | None = None
+    verified: bool | None = None
+    cache_status: CacheStatus | None = None
+    response_status: int | None = None
+    response_bytes: int | None = None
+    ja4: str | None = None
+    asn: int | None = None
+    asn_org: str | None = None
+    country: str | None = None
+    ip_hash: str | None = None
+
+
+class OriginEnrichment(BaseModel):
+    """
+    Recommended data profile for ``content_retrieved`` events with ``source_role: origin``.
+
+    All fields are optional.
+
+    Attributes:
+        user_agent: Request User-Agent header.
+        ip_hash: SHA-256 of client IP (``sha256:{hex}``).
+        response_status: HTTP response status code.
+    """
+
+    user_agent: str | None = None
+    ip_hash: str | None = None
+    response_status: int | None = None
 
 
 class UserContext(BaseModel):
@@ -302,7 +417,7 @@ class TelemetrySession(BaseModel):
         ... )
     """
 
-    schema_version: str = "0.5"
+    schema_version: str = "0.1"
     session_id: UUID
 
     # Actor types
