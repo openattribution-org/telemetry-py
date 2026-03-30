@@ -1,5 +1,5 @@
 -- Add source_role and oa_telemetry_id columns to events table
--- Supports retrieval source identification and cross-observer deduplication (spec v0.5)
+-- Supports retrieval source identification and cross-observer deduplication (spec v0.1)
 
 ALTER TABLE events
     ADD COLUMN source_role TEXT,
@@ -8,7 +8,7 @@ ALTER TABLE events
 -- source_role must be one of the standard roles
 ALTER TABLE events
     ADD CONSTRAINT events_source_role_check CHECK (
-        source_role IS NULL OR source_role IN ('origin', 'index', 'cache', 'agent')
+        source_role IS NULL OR source_role IN ('origin', 'edge', 'index', 'agent')
     );
 
 -- Index for deduplication: group by correlation ID + content URL

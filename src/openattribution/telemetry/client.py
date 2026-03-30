@@ -212,7 +212,7 @@ class Client:
             event_type: Type of event (see EventType).
             content_url: Optional associated content URL.
             product_id: Optional associated product UUID.
-            source_role: Who is reporting this event (origin, index, cache, agent).
+            source_role: Who is reporting this event (origin, edge, index, agent).
             oa_telemetry_id: Correlation ID from OA-Telemetry-ID header for deduplication.
             turn: Optional conversation turn data (for turn_started/turn_completed).
             data: Optional additional event metadata.

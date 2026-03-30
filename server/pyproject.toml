@@ -1,6 +1,6 @@
 [project]
 name = "openattribution-telemetry-server"
-version = "0.2.0"
+version = "0.1.0"
 description = "Reference server implementation for OpenAttribution Telemetry standard"
 readme = "README.md"
 requires-python = ">=3.11"

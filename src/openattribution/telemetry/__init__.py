@@ -23,11 +23,18 @@ from openattribution.telemetry.extract import (
     extract_result_urls,
 )
 from openattribution.telemetry.schema import (
+    BotCategory,
+    CacheStatus,
+    CitationData,
+    CitationPosition,
+    CitationType,
     ConversationTurn,
+    EdgeEnrichment,
     EventType,
     Initiator,
     InitiatorType,
     IntentCategory,
+    OriginEnrichment,
     OutcomeType,
     PrivacyLevel,
     SessionOutcome,
@@ -56,6 +63,10 @@ __all__ = [
     "OutcomeType",
     "PrivacyLevel",
     "IntentCategory",
+    "CitationType",
+    "CitationPosition",
+    "BotCategory",
+    "CacheStatus",
     # Models
     "Initiator",
     "UserContext",
@@ -63,6 +74,10 @@ __all__ = [
     "TelemetryEvent",
     "SessionOutcome",
     "TelemetrySession",
+    # Data profile models
+    "CitationData",
+    "EdgeEnrichment",
+    "OriginEnrichment",
 ]
 
-__version__ = "0.2.0"
+__version__ = "0.1.0"

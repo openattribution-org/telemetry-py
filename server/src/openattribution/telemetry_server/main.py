@@ -36,7 +36,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 app = FastAPI(
     title="OpenAttribution Telemetry Server",
     description="Reference server implementation for the OpenAttribution Telemetry standard",
-    version="0.2.0",
+    version="0.1.0",
     lifespan=lifespan,
 )
 
