@@ -176,7 +176,7 @@ class Client:
         """
         response = await self._request(
             "POST",
-            f"{self.endpoint}/session/start",
+            f"{self.endpoint}/sessions/start",
             json={
                 "initiator_type": initiator_type,
                 "initiator": initiator.model_dump() if initiator else None,
@@ -272,7 +272,7 @@ class Client:
             return
         await self._request(
             "POST",
-            f"{self.endpoint}/session/end",
+            f"{self.endpoint}/sessions/end",
             json={
                 "session_id": str(session_id),
                 "outcome": outcome.model_dump(),
@@ -293,7 +293,7 @@ class Client:
         """
         response = await self._request(
             "POST",
-            f"{self.endpoint}/session/bulk",
+            f"{self.endpoint}/sessions/bulk",
             json=session.model_dump(mode="json"),
         )
         if response is None:
