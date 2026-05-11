@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help test test-sdk test-server lint fmt dev-server migrate ci
+.PHONY: help test test-sdk test-server lint fmt dev-server migrate ci check-versions
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
@@ -26,4 +26,7 @@ dev-server: ## Run server with auto-reload
 migrate: ## Apply SQL migrations to $$DATABASE_URL
 	psql "$(DATABASE_URL)" -f server/migrations/001_telemetry_schema.sql
 
-ci: lint test ## Run lint + test (CI pipeline)
+check-versions: ## Fail if SDK version drifts across files (and vs telemetry-js)
+	python scripts/check_versions.py
+
+ci: check-versions lint test ## Run version check + lint + test (CI pipeline)

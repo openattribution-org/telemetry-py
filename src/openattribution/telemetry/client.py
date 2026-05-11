@@ -65,6 +65,7 @@ class Client:
         timeout: float = 30.0,
         fail_silently: bool = True,
         max_retries: int = 3,
+        default_source_role: SourceRole | None = None,
         logger: logging.Logger | None = None,
     ) -> None:
         """Initialize the client.
@@ -75,12 +76,17 @@ class Client:
             timeout: Request timeout in seconds.
             fail_silently: If True, catch errors and log warnings instead of raising.
             max_retries: Number of retries for transient HTTP errors.
+            default_source_role: Default ``source_role`` stamped on every emitted
+                event when the caller does not set one explicitly. Agent SDKs should
+                set this to ``"agent"``, CDN/edge integrations to ``"edge"``, origin
+                instrumentation to ``"origin"``. A per-event ``source_role`` always wins.
             logger: Logger instance; defaults to ``logging.getLogger("openattribution.telemetry")``.
         """
         self.endpoint = endpoint.rstrip("/")
         self.api_key = api_key
         self.fail_silently = fail_silently
         self.max_retries = max_retries
+        self.default_source_role = default_source_role
         self.logger = logger or logging.getLogger("openattribution.telemetry")
         self.client = httpx.AsyncClient(
             timeout=timeout,
@@ -247,6 +253,12 @@ class Client:
         if session_id is None:
             self.logger.warning("record_events skipped: session_id is None")
             return
+        if not events:
+            return
+        if self.default_source_role is not None:
+            for event in events:
+                if event.source_role is None:
+                    event.source_role = self.default_source_role
         await self._request(
             "POST",
             f"{self.endpoint}/events",

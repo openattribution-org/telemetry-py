@@ -13,6 +13,10 @@ Example:
     ...         event_type="turn_completed",
     ...         turn=ConversationTurn(privacy_level="intent", query_intent="comparison")
     ...     )
+
+For stateless MCP tool servers, see :class:`MCPSessionTracker`, which maps a
+caller-supplied session string to an OA session UUID and reuses it across
+tool calls.
 """
 
 from openattribution.telemetry.acp import session_to_content_attribution
@@ -22,6 +26,7 @@ from openattribution.telemetry.extract import (
     extract_indexed_citations,
     extract_result_urls,
 )
+from openattribution.telemetry.mcp import MCPSessionTracker
 from openattribution.telemetry.schema import (
     BotCategory,
     CacheStatus,
@@ -48,6 +53,8 @@ from openattribution.telemetry.ucp import session_to_attribution
 __all__ = [
     # Client
     "Client",
+    # MCP helper
+    "MCPSessionTracker",
     # Extraction
     "extract_citation_urls",
     "extract_indexed_citations",
@@ -80,4 +87,4 @@ __all__ = [
     "OriginEnrichment",
 ]
 
-__version__ = "0.1.0"
+__version__ = "0.3.1"
