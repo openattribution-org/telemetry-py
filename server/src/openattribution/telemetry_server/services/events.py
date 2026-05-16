@@ -23,7 +23,7 @@ async def create_events(
         row = await conn.execute(
             """
             INSERT INTO events (
-                id, session_id, event_type, source_role, oa_telemetry_id,
+                id, session_id, event_type, source_role, content_telemetry_id,
                 content_url, product_id,
                 turn_data, event_data, event_timestamp
             )
@@ -35,7 +35,7 @@ async def create_events(
                 session_id,
                 event.type,
                 event.source_role,
-                event.oa_telemetry_id,
+                event.content_telemetry_id,
                 event.content_url,
                 event.product_id,
                 turn_data,
@@ -73,7 +73,7 @@ def _row_to_event(row: tuple) -> Event:
     Column order matches the events table:
     0: id, 1: session_id, 2: event_type, 3: content_url, 4: product_id,
     5: turn_data, 6: event_data, 7: event_timestamp, 8: created_at,
-    9: source_role, 10: oa_telemetry_id
+    9: source_role, 10: content_telemetry_id
     """
     return Event(
         id=row[0],
@@ -86,5 +86,5 @@ def _row_to_event(row: tuple) -> Event:
         event_timestamp=row[7],
         created_at=row[8],
         source_role=row[9] if len(row) > 9 else None,
-        oa_telemetry_id=row[10] if len(row) > 10 else None,
+        content_telemetry_id=row[10] if len(row) > 10 else None,
     )

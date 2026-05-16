@@ -207,7 +207,7 @@ class Client:
         content_url: str | None = None,
         product_id: UUID | None = None,
         source_role: SourceRole | None = None,
-        oa_telemetry_id: UUID | None = None,
+        content_telemetry_id: UUID | None = None,
         turn: ConversationTurn | None = None,
         data: dict | None = None,
     ) -> None:
@@ -219,7 +219,7 @@ class Client:
             content_url: Optional associated content URL.
             product_id: Optional associated product UUID.
             source_role: Who is reporting this event (origin, edge, index, agent).
-            oa_telemetry_id: Correlation ID from OA-Telemetry-ID header for deduplication.
+            content_telemetry_id: Correlation ID from Content-Telemetry-ID header for deduplication.
             turn: Optional conversation turn data (for turn_started/turn_completed).
             data: Optional additional event metadata.
         """
@@ -231,7 +231,7 @@ class Client:
             type=event_type,
             timestamp=datetime.now(UTC),
             source_role=source_role,
-            oa_telemetry_id=oa_telemetry_id,
+            content_telemetry_id=content_telemetry_id,
             content_url=content_url,
             product_id=product_id,
             turn=turn,

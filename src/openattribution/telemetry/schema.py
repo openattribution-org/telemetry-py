@@ -343,7 +343,7 @@ class TelemetryEvent(BaseModel):
     type: EventType
     timestamp: datetime
     source_role: SourceRole | None = None
-    oa_telemetry_id: UUID | None = None
+    content_telemetry_id: UUID | None = None
     content_url: str | None = None
     product_id: UUID | None = None
     turn: ConversationTurn | None = None  # For turn_started/turn_completed events

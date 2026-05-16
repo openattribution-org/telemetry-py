@@ -111,7 +111,7 @@ class Event(BaseModel):
     session_id: UUID
     event_type: str
     source_role: str | None
-    oa_telemetry_id: UUID | None
+    content_telemetry_id: UUID | None
     content_url: str | None
     product_id: UUID | None
     turn_data: dict | None
