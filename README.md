@@ -1,9 +1,9 @@
-# OpenAttribution Telemetry - Python SDK
+# OpenAttribution telemetry SDK for Python
 
 [![PyPI version](https://badge.fury.io/py/openattribution-telemetry.svg)](https://badge.fury.io/py/openattribution-telemetry)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Python SDK for the [OpenAttribution Telemetry](https://github.com/openattribution-org/telemetry) standard. Track what content influenced AI agent outcomes.
+Python SDK for the [Content Telemetry](https://github.com/SPUR-Coalition/telemetry) standard - the neutral open standard for reporting how AI agents use content. Track what content influenced AI agent responses.
 
 Part of the [OpenAttribution](https://openattribution.org) project.
 
@@ -175,7 +175,7 @@ See [`server/README.md`](./server/README.md) for setup, endpoints, and deploymen
 
 ## Specification
 
-The OpenAttribution Telemetry standard is maintained in a separate repo: [openattribution-org/telemetry](https://github.com/openattribution-org/telemetry).
+The Content Telemetry standard is stewarded by the SPUR Coalition: [SPUR-Coalition/telemetry](https://github.com/SPUR-Coalition/telemetry). Schemas resolve at [contenttelemetry.org](https://contenttelemetry.org).
 
 This SDK implements the standard and vendors a copy of `schema.json` for validation.
 
